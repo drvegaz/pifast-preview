@@ -12,11 +12,11 @@
     </button>
     <div class="collapse navbar-collapse" id="pfNav">
       <ul class="navbar-nav mx-lg-auto my-3 my-lg-0 gap-lg-2">
-        <li class="nav-item"><a class="nav-link" href="index.php#hem" data-bs-toggle="collapse" data-bs-target="#pfNav">Hem</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php#tjanster" data-bs-toggle="collapse" data-bs-target="#pfNav">Tjänster</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php#om-oss" data-bs-toggle="collapse" data-bs-target="#pfNav">Om oss</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php#referenser" data-bs-toggle="collapse" data-bs-target="#pfNav">Referenser</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php#kontakt" data-bs-toggle="collapse" data-bs-target="#pfNav">Kontakt</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php#hem">Hem</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php#tjanster">Tjänster</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php#om-oss">Om oss</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php#referenser">Referenser</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php#kontakt">Kontakt</a></li>
       </ul>
       <a class="navbar-cta" href="<?= htmlspecialchars($telHref, ENT_QUOTES, 'UTF-8') ?>"<?= pf_edit_attrs($content, 'contact.phone') ?>><?= pf_text($content, 'contact.phone') ?></a>
     </div>

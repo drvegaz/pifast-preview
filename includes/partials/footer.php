@@ -30,6 +30,19 @@
   </div>
 </footer>
 <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script>
+(function () {
+  var navEl = document.getElementById('pfNav');
+  if (!navEl) return;
+  navEl.querySelectorAll('.nav-link').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (navEl.classList.contains('show')) {
+        bootstrap.Collapse.getOrCreateInstance(navEl, { toggle: false }).hide();
+      }
+    });
+  });
+})();
+</script>
 <?php if ($admin): ?>
 <script src="assets/admin/edit.js" defer></script>
 <?php endif; ?>
