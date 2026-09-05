@@ -1,0 +1,57 @@
+CREATE TABLE content (
+  `key` VARCHAR(64) NOT NULL PRIMARY KEY,
+  `value` TEXT NOT NULL,
+  `type` ENUM('text','image') NOT NULL DEFAULT 'text',
+  `updated_at` DATETIME NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE content_history (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  `key` VARCHAR(64) NOT NULL,
+  old_value TEXT NOT NULL,
+  changed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO content (`key`, `value`, `type`) VALUES
+('topbar.badge_1', 'Nättraby', 'text'),
+('topbar.badge_2', 'F-skatt', 'text'),
+('topbar.badge_3', 'Ansvarsförsäkrad', 'text'),
+('topbar.badge_4', 'ROT-avdrag', 'text'),
+('hero.overline', 'Pifast AB · Nättraby', 'text'),
+('hero.title', 'Bygg & fastigheter med omtanke.', 'text'),
+('hero.subtitle', 'Vi är ett familjeföretag med fokus på badrumsrenoveringar, fastighetsservice och byggarbeten. Med personlig kontakt och ett väl utfört arbete hjälper vi dig hela vägen.', 'text'),
+('hero.button_secondary_label', 'Våra tjänster', 'text'),
+('hero.image', 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=85', 'image'),
+('intro.overline', 'Välkommen till Pifast', 'text'),
+('intro.heading', 'En trygg kontakt från start till mål.', 'text'),
+('intro.paragraph', 'Vi är far och son som drivit Pifast sedan 2012. Vi tar oss an både enskilda renoveringar och löpande hjälp med fastigheten – med erfarenhet, ordning och reda.', 'text'),
+('services.overline', 'Våra tjänster', 'text'),
+('services.heading', 'Det här kan vi hjälpa till med', 'text'),
+('services.1.title', 'Badrumsrenovering', 'text'),
+('services.1.body', 'Vi utför kompletta badrumsrenoveringar enligt Byggkeramikrådets rekommendationer.', 'text'),
+('services.2.title', 'Fastighetsservice', 'text'),
+('services.2.body', 'Behöver du en hjälpande hand med din fastighet, stor som liten? Vi tar hand om det löpande arbetet.', 'text'),
+('services.3.title', 'Bygg & montage', 'text'),
+('services.3.body', 'Vi hjälper även till med dörr- och fönsterbyten, köksmontering och andra byggarbeten.', 'text'),
+('about.overline', 'Lokalt & personligt', 'text'),
+('about.heading', 'Vi gör jobbet ordentligt.', 'text'),
+('about.paragraph', 'Vid badrumsrenoveringar samarbetar vi med elektriker och rörfirma, så att du slipper samordna arbetet själv. Vi har egna fastigheter och vet hur svårt det kan vara att få tiden att räcka till.', 'text'),
+('about.list.1', 'Familjeföretag sedan 2012', 'text'),
+('about.list.2', 'Samordning med elektriker och rörfirma', 'text'),
+('about.list.3', 'Godkända för F-skatt och ansvarsförsäkrade', 'text'),
+('about.button_label', 'Prata med oss', 'text'),
+('about.image', 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=85', 'image'),
+('gallery.1.image', 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=900&q=80', 'image'),
+('gallery.2.image', 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80', 'image'),
+('gallery.3.image', 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80', 'image'),
+('gallery.4.image', 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=80', 'image'),
+('contact.overline', 'Kontakt', 'text'),
+('contact.heading', 'Vad behöver du hjälp med?', 'text'),
+('contact.paragraph', 'Kontakta oss för att diskutera ditt projekt eller behov av hjälp med fastigheten.', 'text'),
+('contact.button_label', 'Skicka e-post', 'text'),
+('contact.phone', '0709-505516', 'text'),
+('contact.email', 'patrik@pifastab.se', 'text'),
+('contact.address', 'Idrottsvägen 5\n370 24 Nättraby', 'text'),
+('contact.bankgiro', '883-3873', 'text'),
+('footer.org_number', '556899-6499', 'text'),
+('footer.tax_status', 'Godkänd för F-skatt', 'text');
