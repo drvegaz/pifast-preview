@@ -14,6 +14,7 @@
       <ul class="navbar-nav mx-lg-auto my-3 my-lg-0 gap-lg-2">
         <li class="nav-item"><a class="nav-link" href="index.php#hem">Hem</a></li>
         <li class="nav-item"><a class="nav-link" href="index.php#tjanster">Tjänster</a></li>
+        <li class="nav-item"><a class="nav-link" href="fastigheter.php">Våra fastigheter</a></li>
         <li class="nav-item"><a class="nav-link" href="index.php#om-oss">Om oss</a></li>
         <li class="nav-item"><a class="nav-link" href="index.php#referenser">Referenser</a></li>
         <li class="nav-item"><a class="nav-link" href="index.php#kontakt">Kontakt</a></li>

@@ -5,6 +5,7 @@ require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/csrf.php';
 require_once __DIR__ . '/includes/content.php';
 require_once __DIR__ . '/includes/mailer.php';
+require_once __DIR__ . '/includes/throttle.php';
 
 $content = pf_load_content($pdo);
 $admin = is_admin();
@@ -36,76 +37,6 @@ const PF_FEL_AKUT = [
     'snart' => 'Bör åtgärdas snart',
     'kan_vanta' => 'Kan vänta',
 ];
-
-function pf_throttle_state_path(): string
-{
-    return __DIR__ . '/storage/felanmalan_throttle.json';
-}
-
-function pf_throttle_state_read(): array
-{
-    $file = pf_throttle_state_path();
-    if (!is_file($file)) {
-        return ['ips' => [], 'global' => ['count' => 0, 'windowStart' => time()]];
-    }
-    $data = json_decode((string) file_get_contents($file), true);
-    if (!is_array($data)) {
-        return ['ips' => [], 'global' => ['count' => 0, 'windowStart' => time()]];
-    }
-    $data['ips'] = is_array($data['ips'] ?? null) ? $data['ips'] : [];
-    $data['global'] = is_array($data['global'] ?? null) ? $data['global'] : ['count' => 0, 'windowStart' => time()];
-    return $data;
-}
-
-function pf_throttle_state_write(array $data): void
-{
-    $file = pf_throttle_state_path();
-    $dir = dirname($file);
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
-    }
-    file_put_contents($file, json_encode($data), LOCK_EX);
-}
-
-/** Returns null if allowed, or an error message if blocked. Records the attempt as a side effect. */
-function pf_throttle_check_and_record(string $ip): ?string
-{
-    $now = time();
-    $state = pf_throttle_state_read();
-
-    foreach ($state['ips'] as $key => $entry) {
-        if (($now - ($entry['last'] ?? 0)) > 3600) {
-            unset($state['ips'][$key]);
-        }
-    }
-
-    if (($now - ($state['global']['windowStart'] ?? 0)) > 86400) {
-        $state['global'] = ['count' => 0, 'windowStart' => $now];
-    }
-
-    if (($state['global']['count'] ?? 0) >= 100) {
-        pf_throttle_state_write($state);
-        return 'För många förfrågningar just nu. Försök igen senare eller ring oss istället.';
-    }
-
-    $entry = $state['ips'][$ip] ?? ['count' => 0, 'first' => $now, 'last' => $now];
-    if (($now - $entry['first']) > 3600) {
-        $entry = ['count' => 0, 'first' => $now, 'last' => $now];
-    }
-
-    if ($entry['count'] >= 5) {
-        $state['ips'][$ip] = $entry;
-        pf_throttle_state_write($state);
-        return 'För många förfrågningar från din uppkoppling. Vänta en stund och försök igen.';
-    }
-
-    $entry['count']++;
-    $entry['last'] = $now;
-    $state['ips'][$ip] = $entry;
-    $state['global']['count'] = ($state['global']['count'] ?? 0) + 1;
-    pf_throttle_state_write($state);
-    return null;
-}
 
 $errors = [];
 $sent = false;
@@ -218,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($errors)) {
             $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-            $throttleError = pf_throttle_check_and_record($ip);
+            $throttleError = pf_throttle_check_and_record('felanmalan', $ip);
             if ($throttleError !== null) {
                 $errors[] = $throttleError;
             }
@@ -244,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sendTo = $email !== '' ? $email : 'patrik@pifastab.se';
             $replyTo = $values['epost'] !== '' ? $values['epost'] : null;
 
-            $sent = pf_send_felanmalan_mail($sendTo, $sendTo, $replyTo, $subject, $bodyText, $attachment);
+            $sent = pf_send_form_mail($sendTo, $sendTo, $replyTo, $subject, $bodyText, $attachment);
             if (!$sent) {
                 $errors[] = 'Kunde inte skicka anmälan just nu. Ring oss gärna istället.';
             }

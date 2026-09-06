@@ -17,6 +17,7 @@
           <li><a href="index.php#hem">Hem</a></li>
           <li><a href="index.php#om-oss">Om oss</a></li>
           <li><a href="index.php#tjanster">Tjänster</a></li>
+          <li><a href="fastigheter.php">Våra fastigheter</a></li>
           <li><a href="index.php#referenser">Referenser</a></li>
           <li><a href="index.php#kontakt">Kontakt</a></li>
           <li><a href="felanmalan.php">Felanmälan</a></li>

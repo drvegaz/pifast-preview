@@ -8,7 +8,7 @@ function pf_header_unsafe(string $value): bool
 
 /**
  * Builds the raw message parts for a felanmälan email, without sending it.
- * Kept separate from pf_send_felanmalan_mail() so the MIME construction can
+ * Kept separate from pf_send_form_mail() so the MIME construction can
  * be tested independently of the mail transport.
  *
  * @param array{data:string,mime:string,filename:string}|null $attachment
@@ -62,7 +62,7 @@ function pf_build_felanmalan_mime(
 /**
  * @param array{data:string,mime:string,filename:string}|null $attachment
  */
-function pf_send_felanmalan_mail(
+function pf_send_form_mail(
     string $to,
     string $fromAddress,
     ?string $replyTo,
