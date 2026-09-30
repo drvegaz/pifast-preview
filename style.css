@@ -396,15 +396,15 @@ h2 {
 }
 
 .btn-brand {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: #ca934f;
+  border-color: #ca934f;
   color: #fff;
 }
 
 .btn-brand:hover,
 .btn-brand:focus {
-  background: var(--accent-dark);
-  border-color: var(--accent-dark);
+  background: #ac7d43;
+  border-color: #ac7d43;
   color: #fff;
 }
 
