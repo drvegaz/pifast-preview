@@ -458,10 +458,18 @@ h2 {
   position: relative;
   z-index: 2;
   width: 100%;
+  /* Raden spänner hela hero-bredden även där bara tom kolumn finns,
+     vilket annars blockerar hover/klick på bilden bakom (t.ex. "Byt bild"). */
+  pointer-events: none;
+}
+
+.hero .container .row {
+  pointer-events: none;
 }
 
 .hero-text {
   max-width: 560px;
+  pointer-events: auto;
 }
 
 .hero-text .overline {
