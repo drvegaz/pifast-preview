@@ -67,9 +67,11 @@
     }
   }
 
-  document.querySelectorAll('[data-edit-key]').forEach(function (el) {
+  function enhanceEditableText(el) {
     attachPencil(el, el.getAttribute('data-edit-key'));
-  });
+  }
+
+  document.querySelectorAll('[data-edit-key]').forEach(enhanceEditableText);
 
   function openEditor(key) {
     var instances = Array.prototype.slice.call(
@@ -154,7 +156,7 @@
     saveBtn.addEventListener('click', save);
   }
 
-  document.querySelectorAll('[data-edit-image]').forEach(function (el) {
+  function enhanceEditableImage(el) {
     var key = el.getAttribute('data-edit-image');
     var cssVar = '--' + key.replace(/\./g, '-');
     var overlay = document.createElement('div');
@@ -204,7 +206,80 @@
     overlay.appendChild(btn);
     overlay.appendChild(fileInput);
     el.appendChild(overlay);
-  });
+  }
+
+  document.querySelectorAll('[data-edit-image]').forEach(enhanceEditableImage);
+
+  var propertiesList = document.getElementById('pf-properties-list');
+  if (propertiesList) {
+    function attachRemoveHandler(btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('Ta bort den har fastigheten? Detta gar inte att angra.')) return;
+        var id = btn.getAttribute('data-remove-property');
+        var card = btn.closest('[data-property-card]');
+        btn.disabled = true;
+        apiFetch('/api/property_delete.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id }),
+        })
+          .then(function () {
+            if (card) card.remove();
+            toast('Fastighet borttagen ✓');
+          })
+          .catch(function (err) {
+            alert(err.message);
+            btn.disabled = false;
+          });
+      });
+    }
+
+    propertiesList.querySelectorAll('[data-remove-property]').forEach(attachRemoveHandler);
+
+    var addBtn = document.getElementById('pf-add-property');
+    if (addBtn) {
+      addBtn.addEventListener('click', function () {
+        addBtn.disabled = true;
+        apiFetch('/api/property_add.php', { method: 'POST' })
+          .then(function (data) {
+            var col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-3';
+            col.setAttribute('data-property-card', data.id);
+            col.innerHTML =
+              '<article class="service-card">' +
+              '<div class="service-card-img" data-edit-image="property.' + data.id + '.image"><img src="" alt="Fastighet, Pifast AB" loading="lazy"></div>' +
+              '<div class="service-card-body">' +
+              '<h3 data-edit-key="property.' + data.id + '.name" data-raw-value=""></h3>' +
+              '<p data-edit-key="property.' + data.id + '.description" data-raw-value="" data-multiline="1"></p>' +
+              '</div>' +
+              '<button type="button" class="pf-remove-property" data-remove-property="' + data.id + '">Ta bort fastighet</button>' +
+              '</article>';
+
+            var heading = col.querySelector('h3');
+            var paragraph = col.querySelector('p');
+            heading.textContent = data.name;
+            heading.setAttribute('data-raw-value', data.name);
+            paragraph.textContent = data.description;
+            paragraph.setAttribute('data-raw-value', data.description);
+
+            propertiesList.appendChild(col);
+
+            enhanceEditableImage(col.querySelector('[data-edit-image]'));
+            enhanceEditableText(heading);
+            enhanceEditableText(paragraph);
+            attachRemoveHandler(col.querySelector('[data-remove-property]'));
+
+            toast('Fastighet tillagd ✓');
+          })
+          .catch(function (err) {
+            alert(err.message);
+          })
+          .finally(function () {
+            addBtn.disabled = false;
+          });
+      });
+    }
+  }
 
   var toggleBtn = document.createElement('button');
   toggleBtn.type = 'button';

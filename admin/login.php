@@ -93,12 +93,12 @@ $csrf = csrf_token();
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
-.pf-login{min-height:100vh;display:grid;place-items:center;background:var(--pale)}
+.pf-login{min-height:100vh;display:grid;place-items:center;background:var(--offwhite)}
 .pf-login form{background:white;padding:40px 36px;border-radius:var(--radius);box-shadow:var(--shadow-md);width:min(340px,90vw)}
 .pf-login h1{font-size:22px;margin:0 0 20px;font-weight:800}
 .pf-login input[type=password]{margin-bottom:16px}
-.pf-login button{width:100%;padding:12px;border:0;background:var(--blue);color:white;font-weight:700;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;transition:background-color .15s ease}
-.pf-login button:hover{background:var(--accent-dark, #274d61)}
+.pf-login button{width:100%;padding:12px;border:0;background:var(--accent);color:white;font-weight:700;font-size:14px;border-radius:var(--radius-sm);cursor:pointer;transition:background-color .15s ease}
+.pf-login button:hover{background:var(--accent-dark)}
 .pf-login .error{color:#a4342a;font-size:13px;margin:0 0 14px}
 </style>
 </head>

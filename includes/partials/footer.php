@@ -1,47 +1,48 @@
 <footer>
   <div class="container">
-    <div class="row gy-4">
-      <div class="col-lg-4">
-        <a class="navbar-brand d-inline-block mb-3" href="index.php#hem">PI<span>FAST</span><small>AB</small></a>
-        <p>Familjeföretag inom bygg och fastighetsservice i Nättraby, sedan 2012.</p>
-      </div>
-      <div class="col-6 col-lg-4">
-        <h4>Kontakt</h4>
-        <p><a href="<?= htmlspecialchars($telHref, ENT_QUOTES, 'UTF-8') ?>"<?= pf_edit_attrs($content, 'contact.phone') ?>><?= pf_text($content, 'contact.phone') ?></a></p>
-        <p><a href="<?= htmlspecialchars($mailHref, ENT_QUOTES, 'UTF-8') ?>"<?= pf_edit_attrs($content, 'contact.email') ?>><?= pf_text($content, 'contact.email') ?></a></p>
-        <p<?= pf_edit_attrs($content, 'contact.address') ?>><?= pf_text($content, 'contact.address') ?></p>
-      </div>
-      <div class="col-6 col-lg-4">
-        <h4>Snabblänkar</h4>
-        <ul class="footer-links">
-          <li><a href="index.php#hem">Hem</a></li>
-          <li><a href="index.php#om-oss">Om oss</a></li>
-          <li><a href="index.php#tjanster">Tjänster</a></li>
-          <li><a href="fastigheter.php">Våra fastigheter</a></li>
-          <li><a href="index.php#referenser">Referenser</a></li>
-          <li><a href="index.php#kontakt">Kontakt</a></li>
-          <li><a href="felanmalan.php">Felanmälan</a></li>
-        </ul>
-      </div>
+    <div class="footer-top">
+      <a class="footer-logo" href="index.php#hem" aria-label="Pifast startsida"><img src="assets/img/frontlogga-red-invert.png" alt="PIFAST AB – Bygg &amp; Fastighetsservice"></a>
+      <ul class="footer-links">
+        <li><a href="index.php#hem">Hem</a></li>
+        <li><a href="index.php#om-oss">Om oss</a></li>
+        <li><a href="index.php#tjanster">Tjänster</a></li>
+        <li><a href="index.php#referenser">Referenser</a></li>
+        <li><a href="fastigheter.php">Våra fastigheter</a></li>
+        <li><a href="index.php#kontakt">Kontakt</a></li>
+        <li><a href="felanmalan.php">Felanmälan</a></li>
+      </ul>
     </div>
     <div class="footer-bottom">
-      <span>&copy; <?= date('Y') ?> Pifast AB. Alla rättigheter förbehållna.</span>
-      <span>Org.nr <span<?= pf_edit_attrs($content, 'footer.org_number') ?>><?= pf_text($content, 'footer.org_number') ?></span> &middot; Bankgiro <span<?= pf_edit_attrs($content, 'contact.bankgiro') ?>><?= pf_text($content, 'contact.bankgiro') ?></span> &middot; <span<?= pf_edit_attrs($content, 'footer.tax_status') ?>><?= pf_text($content, 'footer.tax_status') ?></span></span>
+      <span>PIFAST AB &ndash; Bygg &amp; Fastighetsservice &middot; <span<?= pf_edit_attrs($content, 'topbar.badge_1') ?>><?= pf_text($content, 'topbar.badge_1') ?></span></span>
+      <span>&copy; <?= date('Y') ?> PIFAST AB. Org.nr <span<?= pf_edit_attrs($content, 'footer.org_number') ?>><?= pf_text($content, 'footer.org_number') ?></span></span>
+      <a class="footer-admin-link" href="admin/login.php">Logga in</a>
     </div>
   </div>
 </footer>
+<button type="button" class="scroll-top-btn" id="pfScrollTop" aria-label="Till toppen"><?= pf_icon('chevron-up') ?></button>
 <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 <script>
 (function () {
   var navEl = document.getElementById('pfNav');
-  if (!navEl) return;
-  navEl.querySelectorAll('.nav-link').forEach(function (link) {
-    link.addEventListener('click', function () {
-      if (navEl.classList.contains('show')) {
-        bootstrap.Collapse.getOrCreateInstance(navEl, { toggle: false }).hide();
-      }
+  if (navEl) {
+    navEl.querySelectorAll('.nav-link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        if (navEl.classList.contains('show')) {
+          bootstrap.Collapse.getOrCreateInstance(navEl, { toggle: false }).hide();
+        }
+      });
     });
-  });
+  }
+
+  var scrollBtn = document.getElementById('pfScrollTop');
+  if (scrollBtn) {
+    window.addEventListener('scroll', function () {
+      scrollBtn.classList.toggle('visible', window.scrollY > 480);
+    });
+    scrollBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 })();
 </script>
 <?php if ($admin): ?>

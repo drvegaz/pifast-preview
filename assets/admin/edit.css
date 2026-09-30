@@ -12,7 +12,7 @@
   font-size: 12px;
   line-height: 1;
   background: #ffffff;
-  color: var(--blue, #315f77);
+  color: var(--accent, #dc2626);
   border: 1px solid rgba(0, 0, 0, .15);
   border-radius: var(--radius-sm, 6px);
   cursor: pointer;
@@ -43,6 +43,36 @@
   display: flex;
 }
 
+.pf-remove-property {
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+  font: 700 13px "Open Sans", Arial, sans-serif;
+  padding: 8px 12px;
+  border: 1px solid #d999a3;
+  border-radius: var(--radius-sm, 6px);
+  background: #fbeaea;
+  color: #a4342a;
+  cursor: pointer;
+  transition: filter .15s ease;
+}
+
+.pf-remove-property:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+
+.admin-mode.pf-editing .pf-remove-property {
+  display: block;
+}
+
+.pf-add-property {
+  display: none;
+}
+
+.admin-mode.pf-editing .pf-add-property {
+  display: inline-flex;
+}
+
 .pf-edit-toggle,
 .pf-logout {
   position: fixed;
@@ -65,8 +95,8 @@
 
 .pf-edit-toggle {
   bottom: 20px;
-  background: var(--gold, #c79e54);
-  color: #172f3d;
+  background: var(--accent, #dc2626);
+  color: #fff;
 }
 
 .pf-logout {
@@ -91,7 +121,7 @@
 }
 
 .pf-btn-primary {
-  background: var(--blue, #315f77);
+  background: var(--accent, #dc2626);
   color: #fff;
 }
 

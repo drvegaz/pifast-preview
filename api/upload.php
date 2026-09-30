@@ -6,12 +6,22 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/content.php';
+require_once __DIR__ . '/../includes/properties.php';
 
 require_login();
 require_csrf();
 
 $key = $_POST['key'] ?? null;
-if (!is_string($key) || pf_key_type($key) !== 'image') {
+if (!is_string($key)) {
+    http_response_code(400);
+    echo json_encode(['ok' => false, 'error' => 'Okänt fält.']);
+    exit;
+}
+
+$propertyField = pf_property_field_key($key);
+$isPropertyImage = $propertyField !== null && $propertyField['field'] === 'image' && pf_property_exists($pdo, $propertyField['id']);
+
+if (!$isPropertyImage && pf_key_type($key) !== 'image') {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'Okänt fält.']);
     exit;
@@ -119,19 +129,35 @@ if (!$saved) {
 
 $publicUrl = '/uploads/' . $filename;
 
-$stmt = $pdo->prepare('SELECT value FROM content WHERE `key` = ?');
-$stmt->execute([$key]);
-$old = $stmt->fetchColumn();
+if ($isPropertyImage) {
+    $stmt = $pdo->prepare('SELECT image FROM properties WHERE id = ?');
+    $stmt->execute([$propertyField['id']]);
+    $old = $stmt->fetchColumn();
 
-if ($old === false) {
-    @unlink($targetPath);
-    http_response_code(400);
-    echo json_encode(['ok' => false, 'error' => 'Okänt fält.']);
-    exit;
+    if ($old === false) {
+        @unlink($targetPath);
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'error' => 'Okänt fält.']);
+        exit;
+    }
+
+    $update = $pdo->prepare('UPDATE properties SET image = ? WHERE id = ?');
+    $update->execute([$publicUrl, $propertyField['id']]);
+} else {
+    $stmt = $pdo->prepare('SELECT value FROM content WHERE `key` = ?');
+    $stmt->execute([$key]);
+    $old = $stmt->fetchColumn();
+
+    if ($old === false) {
+        @unlink($targetPath);
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'error' => 'Okänt fält.']);
+        exit;
+    }
+
+    $update = $pdo->prepare('UPDATE content SET value = ?, updated_at = NOW() WHERE `key` = ?');
+    $update->execute([$publicUrl, $key]);
 }
-
-$update = $pdo->prepare('UPDATE content SET value = ?, updated_at = NOW() WHERE `key` = ?');
-$update->execute([$publicUrl, $key]);
 
 if (is_string($old) && str_starts_with($old, '/uploads/')) {
     $oldPath = __DIR__ . '/../' . ltrim($old, '/');

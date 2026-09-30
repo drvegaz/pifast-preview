@@ -1,7 +1,16 @@
 DirectoryIndex index.php index.html
 
 RewriteEngine On
+
+# Tvinga HTTPS. X-Forwarded-Proto-kollen behovs om one.com terminerar
+# TLS i en proxy/cache (Varnish) framfor Apache, sa att %{HTTPS} inte
+# alltid syns korrekt av .htaccess-reglerna.
 RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Kanonisk domain: apex (pifastab.se) -> www.pifastab.se
+RewriteCond %{HTTP_HOST} ^pifastab\.se$ [NC]
+RewriteRule ^ https://www.pifastab.se%{REQUEST_URI} [L,R=301]
 
 Options -Indexes

@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/csrf.php';
 require_once __DIR__ . '/includes/content.php';
+require_once __DIR__ . '/includes/properties.php';
 require_once __DIR__ . '/includes/mailer.php';
 require_once __DIR__ . '/includes/throttle.php';
 
@@ -23,14 +24,7 @@ if (empty($_SESSION['fastigheter_rendered_at'])) {
     $_SESSION['fastigheter_rendered_at'] = time();
 }
 
-$properties = [];
-for ($i = 1; $i <= 4; $i++) {
-    $properties[$i] = [
-        'image' => $content["properties.$i.image"] ?? '',
-        'name' => $content["properties.$i.name"] ?? '',
-        'description' => $content["properties.$i.description"] ?? '',
-    ];
-}
+$properties = pf_load_properties($pdo);
 
 $errors = [];
 $sent = false;
@@ -61,9 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $values['meddelande'] = trim((string) ($_POST['meddelande'] ?? ''));
 
         $fastighetOptions = ['' => 'Oavsett fastighet'];
-        foreach ($properties as $i => $property) {
+        foreach ($properties as $property) {
             if ($property['name'] !== '') {
-                $fastighetOptions['p' . $i] = $property['name'];
+                $fastighetOptions['p' . $property['id']] = $property['name'];
             }
         }
 
@@ -118,9 +112,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $fastighetOptionsForView = ['' => 'Oavsett fastighet'];
-foreach ($properties as $i => $property) {
+foreach ($properties as $property) {
     if ($property['name'] !== '') {
-        $fastighetOptionsForView['p' . $i] = $property['name'];
+        $fastighetOptionsForView['p' . $property['id']] = $property['name'];
     }
 }
 ?>
@@ -129,8 +123,9 @@ foreach ($properties as $i => $property) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Fastigheter som Pifast AB äger och hyr ut, samt intresseanmälan/kö.">
-<title>Våra fastigheter | Pifast AB</title>
+<meta name="description" content="Fastigheter som PIFAST AB äger och hyr ut i Nättraby, samt intresseanmälan/kö för lediga lägenheter.">
+<title>Våra fastigheter – PIFAST AB</title>
+<link rel="canonical" href="https://www.pifastab.se/fastigheter.php">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -161,21 +156,29 @@ foreach ($properties as $i => $property) {
       <p class="overline">Våra fastigheter</p>
       <h2>Fastigheter vi äger och hyr ut</h2>
     </div>
-    <div class="row g-4">
-      <?php for ($i = 1; $i <= 4; $i++): ?>
-      <div class="col-md-6 col-lg-3">
+    <div class="row g-4" id="pf-properties-list">
+      <?php foreach ($properties as $property): ?>
+      <div class="col-md-6 col-lg-3" data-property-card="<?= $property['id'] ?>">
         <article class="service-card">
-          <div class="service-card-img" data-edit-image="properties.<?= $i ?>.image">
-            <img src="<?= pf_image_url($content, "properties.$i.image") ?>" alt="Fastighet, Pifast AB" loading="lazy">
+          <div class="service-card-img" data-edit-image="property.<?= $property['id'] ?>.image">
+            <img src="<?= htmlspecialchars($property['image'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($property['name'] !== '' ? $property['name'] : 'Fastighet, PIFAST AB', ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
           </div>
           <div class="service-card-body">
-            <h3<?= pf_edit_attrs($content, "properties.$i.name") ?>><?= pf_text($content, "properties.$i.name") ?></h3>
-            <p<?= pf_edit_attrs($content, "properties.$i.description") ?>><?= pf_text($content, "properties.$i.description") ?></p>
+            <h3<?= pf_render_edit_attrs("property.{$property['id']}.name", $property['name'], false) ?>><?= pf_render_text($property['name'], false) ?></h3>
+            <p<?= pf_render_edit_attrs("property.{$property['id']}.description", $property['description'], true) ?>><?= pf_render_text($property['description'], true) ?></p>
           </div>
+          <?php if ($admin): ?>
+          <button type="button" class="pf-remove-property" data-remove-property="<?= $property['id'] ?>">Ta bort fastighet</button>
+          <?php endif; ?>
         </article>
       </div>
-      <?php endfor; ?>
+      <?php endforeach; ?>
     </div>
+    <?php if ($admin): ?>
+    <div class="text-center mt-4">
+      <button type="button" id="pf-add-property" class="pf-btn pf-btn-primary pf-add-property">+ Lägg till fastighet</button>
+    </div>
+    <?php endif; ?>
   </div>
 </section>
 

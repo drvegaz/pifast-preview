@@ -6,6 +6,7 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/content.php';
+require_once __DIR__ . '/../includes/properties.php';
 
 require_login();
 require_csrf();
@@ -17,6 +18,31 @@ $value = is_array($input) ? ($input['value'] ?? null) : null;
 if (!is_string($key) || !is_string($value)) {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'Ogiltig förfrågan.']);
+    exit;
+}
+
+$propertyField = pf_property_field_key($key);
+if ($propertyField !== null) {
+    if ($propertyField['field'] === 'image' || !pf_property_exists($pdo, $propertyField['id'])) {
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'error' => 'Okänt fält.']);
+        exit;
+    }
+
+    $value = trim($value);
+    $multiline = $propertyField['field'] === 'description';
+    $maxLength = $multiline ? 2000 : 200;
+    if (mb_strlen($value) > $maxLength) {
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'error' => 'Texten är för lång (max ' . $maxLength . ' tecken).']);
+        exit;
+    }
+
+    $column = $propertyField['field']; // 'name' or 'description', whitelisted above
+    $update = $pdo->prepare("UPDATE properties SET `$column` = ? WHERE id = ?");
+    $update->execute([$value, $propertyField['id']]);
+
+    echo json_encode(['ok' => true, 'value' => $value]);
     exit;
 }
 
